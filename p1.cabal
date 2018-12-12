@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 045f9ac0ba766fb59621a950e695a0d71fe135ef38573e171aa567118d2e72c3
+-- hash: 6b1acc89c7ea56f76487b3a3a39e0f992aa4b4cee1b87d17aa0078ad59ed884c
 
 name:           p1
 version:        0.1.0.0
@@ -21,9 +21,14 @@ extra-source-files:
 executable p1
   main-is: Main.hs
   other-modules:
+      Game
+      Loop
+      NavalBattle
       Paths_p1
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      base >=4.7 && <5,
+      array,
+      gloss
   default-language: Haskell2010

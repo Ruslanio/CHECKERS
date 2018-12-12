@@ -1,6 +1,6 @@
 module Main where
-import NavalBattle
+import Loop
 
 main :: IO()
-main = runBattle
+main = play
 
