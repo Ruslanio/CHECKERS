@@ -2,6 +2,7 @@
 module Game where
 
 import Data.Array
+import Util
 
 data Move = Up | Down | Left | Right
     deriving (Enum)
@@ -18,3 +19,6 @@ data Game = Game {
 
 shuffle :: Int -> IO Game
 shuffle = un
+
+isGameOver :: Game -> Bool
+isGameOver = un

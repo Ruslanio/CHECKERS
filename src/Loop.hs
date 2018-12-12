@@ -2,6 +2,7 @@
 module Loop where
 
 import Game
+import Util
 
 data Query = Quit | NewGame Int | Play Move
 
@@ -20,10 +21,19 @@ readInt :: String -> Maybe Int
 readInt = un
 
 gameLoop :: Game -> IO ()
-gameLoop = un
+gameLoop game
+    | isGameOver game   = showResults game >> setup >>= gameLoop
+    | otherwise         = showGame game >> askForMove >>= reactOnMove game
 
 
+showResults :: Game -> IO ()
+showResults = un
 
--- | функция заглушка, типа TODO для хаскела
-un :: a
-un = undefined
+showGame :: Game -> IO ()
+showGame = un
+
+askForMove :: IO Query
+askForMove = un
+
+reactOnMove :: Game -> Query -> IO ()
+reactOnMove = un
