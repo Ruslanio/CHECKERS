@@ -4,6 +4,7 @@ import Prelude hiding (Either(..))
 import System.Random
 import Data.Array
 import Util
+import Debug.Trace
 
 data Move = Up | Down | Left | Right
     deriving (Enum)
@@ -36,12 +37,22 @@ isGameOver = ( == initGame)
 
 newtype Vec = Vec (Int, Int)
 
+
+makeMove :: Pos -> Game -> Game
+makeMove (i,j) game = move Left game
+
+
+
 move :: Move -> Game -> Game
 move m (Game id board)
     | within id' = Game id' $ board // updates
     | otherwise  = Game id board
     where id' = shift (orient m) id
           updates = [(id, board ! id'), (id', emptyLabel)]
+
+
+-- move :: Pos -> Game -> Game
+-- move pos
 
 -- определение того, что индексы внутри доски
 within :: Pos -> Bool
@@ -66,6 +77,9 @@ emptyLabel = 15
 
 initGame :: Game
 initGame = Game (3, 3) $ listArray ((0, 0), (3, 3)) $ [0 .. 15]
+
+updateGame :: Float -> Game -> Game
+updateGame _ = id
 
 instance Show Game where
   show (Game _ board) = "\n" ++ space ++ line ++

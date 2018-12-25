@@ -23,7 +23,8 @@ executable p1
   other-modules:
       Game
       Loop
-      NavalBattle
+      Util
+      Graphics
       Paths_p1
   hs-source-dirs:
       src
