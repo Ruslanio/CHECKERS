@@ -5,6 +5,7 @@ import System.Random
 import Data.Array
 import Util
 import Debug.Trace
+import System.IO.Unsafe
 
 data Move = Up | Down | Left | Right
     deriving (Enum)
@@ -89,8 +90,10 @@ emptyLabel = 15
 initGame :: Game
 initGame = Game (3, 3) $ listArray ((0, 0), (3, 3)) $ [0 .. 15]
 
+
+-- Вынужденная мера, не трогать, может жахнуть
 initGameGraphic :: Game
-initGameGraphic = shuffleGraphic 4
+initGameGraphic = unsafePerformIO $ shuffle 4
 
 updateGame :: Float -> Game -> Game
 updateGame _ = id
@@ -111,21 +114,3 @@ instance Show Game where
                 column i = nums $ map (\x -> (i, x)) [0 .. 3]
                 space = "\t"
 
-
-shuffleGraphic :: Int -> Game
-shuffleGraphic n = (iterate (shuffle1Graphic =<<) $ pure initGame) !! n
-
-shuffle1Graphic :: Game -> Game
-shuffle1Graphic g = flip move g <$> (randomElemGraphic $ nextMovesGraphic g)
-
--- генерируем случайное число в диапазоне индексов списка и затем извлекаем элемент.
-randomElemGraphic :: [a] -> a
-randomElemGraphic xs = (xs !! ) <$> randomRIO (0, length xs - 1)
-
-randomIntS :: State StdGen Int
-randomIntS = State randomInt
-
-
-nextMovesGraphic g = filter (within . moveEmptyTo . orient) allMoves
-    where moveEmptyTo v = shift v (emptyField g)
-          allMoves = [Up, Down, Left, Right]

@@ -34,8 +34,8 @@ screenHeight = cellSize * boardHeight
 
 
 -- | Запустить игру «Пятнашки».
-run :: IO ()
-run = do
+runGraphic :: IO ()
+runGraphic = do
   play display bgColor fps initGameGraphic drawGame handleGame updateGame
   where
     display = InWindow "Пятнашки" (screenWidth, screenHeight) (200, 200)
