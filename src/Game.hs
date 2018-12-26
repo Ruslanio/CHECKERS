@@ -25,6 +25,7 @@ shuffle n = (iterate (shuffle1 =<<) $ pure initGame) !! n
 shuffle1 :: Game -> IO Game
 shuffle1 g = flip move g <$> (randomElem $ nextMoves g)
 
+-- генерируем случайное число в диапазоне индексов списка и затем извлекаем элемент.
 randomElem :: [a] -> IO a
 randomElem xs = (xs !! ) <$> randomRIO (0, length xs - 1)
 
@@ -37,11 +38,25 @@ isGameOver = ( == initGame)
 
 newtype Vec = Vec (Int, Int)
 
+-- Надстройка над move для работы с нрафической оболочкой
+moveGraphic :: Pos -> Game -> Game
+moveGraphic pos game = case pointDirection pos game of
+        Nothing -> game
+        Just direction -> move direction game
 
-makeMove :: Pos -> Game -> Game
-makeMove (i,j) game = move Left game
 
-
+-- Направления не совпадают из-за несовпадения разметки массива с системой координат в пакете Gloss
+pointDirection :: Pos -> Game -> Maybe Move
+pointDirection pos game
+             | pos == left = Just Left
+             | pos == right = Just Right
+             | pos == down = Just Down
+             | pos == up = Just Up
+             | otherwise = Nothing
+            where left = shift (orient Left) (emptyField game)
+                  right = shift (orient Right) (emptyField game)
+                  down = shift (orient Down) (emptyField game)
+                  up = shift (orient Up) (emptyField game)
 
 move :: Move -> Game -> Game
 move m (Game id board)
@@ -49,10 +64,6 @@ move m (Game id board)
     | otherwise  = Game id board
     where id' = shift (orient m) id
           updates = [(id, board ! id'), (id', emptyLabel)]
-
-
--- move :: Pos -> Game -> Game
--- move pos
 
 -- определение того, что индексы внутри доски
 within :: Pos -> Bool
@@ -78,6 +89,9 @@ emptyLabel = 15
 initGame :: Game
 initGame = Game (3, 3) $ listArray ((0, 0), (3, 3)) $ [0 .. 15]
 
+initGameGraphic :: Game
+initGameGraphic = shuffleGraphic 4
+
 updateGame :: Float -> Game -> Game
 updateGame _ = id
 
@@ -96,3 +110,22 @@ instance Show Game where
                           map post
                 column i = nums $ map (\x -> (i, x)) [0 .. 3]
                 space = "\t"
+
+
+shuffleGraphic :: Int -> Game
+shuffleGraphic n = (iterate (shuffle1Graphic =<<) $ pure initGame) !! n
+
+shuffle1Graphic :: Game -> Game
+shuffle1Graphic g = flip move g <$> (randomElemGraphic $ nextMovesGraphic g)
+
+-- генерируем случайное число в диапазоне индексов списка и затем извлекаем элемент.
+randomElemGraphic :: [a] -> a
+randomElemGraphic xs = (xs !! ) <$> randomRIO (0, length xs - 1)
+
+randomIntS :: State StdGen Int
+randomIntS = State randomInt
+
+
+nextMovesGraphic g = filter (within . moveEmptyTo . orient) allMoves
+    where moveEmptyTo v = shift v (emptyField g)
+          allMoves = [Up, Down, Left, Right]

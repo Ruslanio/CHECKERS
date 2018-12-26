@@ -15,7 +15,7 @@ play = greetings >> setup >>= gameLoop
 setup :: IO Game
 setup = putStrLn "Начнём новую игру?" >>
     putStrLn "Укажите сложность (положительное целое число): " >>
-    getLine >>= maybe setup shuffle . readInt                      -- | '.' значит что мы вычисляеи байду справа и пихаем то что получилось в байду слева
+    getLine >>= maybe setup shuff+le . readInt                      -- | '.' значит что мы вычисляеи байду справа и пихаем то что получилось в байду слева
 
 
 

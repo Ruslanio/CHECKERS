@@ -1,3 +1,4 @@
+-- | Модуль отвечающий за отрисовку игры
 module Graphics where
 
 import Graphics.Gloss.Interface.Pure.Game
@@ -11,23 +12,23 @@ type Cell = Maybe Label
 
 
 -- "Переменные"
--- | Ширина игрового поля в клетках.
+-- Ширина игрового поля в клетках.
 boardWidth :: Int
 boardWidth  = 4
 
--- | Высота игрового поля в клетках.
+-- Высота игрового поля в клетках.
 boardHeight :: Int
 boardHeight = 4
 
--- | Размер одной клетки в пикселях.
+-- Размер одной клетки в пикселях.
 cellSize :: Int
 cellSize = 100
 
--- | Ширина экрана в пикселях.
+-- Ширина экрана в пикселях.
 screenWidth :: Int
 screenWidth  = cellSize * boardWidth
 
--- | Высота экрана в пикселях.
+-- Высота экрана в пикселях.
 screenHeight :: Int
 screenHeight = cellSize * boardHeight
 
@@ -35,7 +36,7 @@ screenHeight = cellSize * boardHeight
 -- | Запустить игру «Пятнашки».
 run :: IO ()
 run = do
-  play display bgColor fps initGame drawGame handleGame updateGame
+  play display bgColor fps initGameGraphic drawGame handleGame updateGame
   where
     display = InWindow "Пятнашки" (screenWidth, screenHeight) (200, 200)
     bgColor = black   -- цвет фона
@@ -57,19 +58,19 @@ drawBoard game = pictures drawCells
     drawCells = map drawRow (assocs $ gameBoard game)
 
 drawRow :: ((Int,Int), Label) -> Picture
-drawRow ((i,j), label) = translate (0.4 + fromIntegral j) (0.4 + fromIntegral i) (drawCell label)
+drawRow ((i,j), label) = translate (0.4 + fromIntegral i) (0.4 + fromIntegral j) (drawCell label)
 
--- | Нарисовать цифру в клетке поля.
+-- Нарисовать цифру в клетке поля.
 drawCell :: Label -> Picture
 drawCell label  = color white (drawLabel label)
 
--- | Нарисовать цифру.
+-- Нарисовать цифру.
 drawLabel :: Label -> Picture
 drawLabel label
           | label < 15 = scale 0.002 0.002 . text $ (show label)
           | otherwise = blank
 
--- | Сетка игрового поля.
+-- Сетка игрового поля.
 drawGrid :: Picture
 drawGrid = color white (pictures (hs ++ vs))
   where
@@ -79,15 +80,13 @@ drawGrid = color white (pictures (hs ++ vs))
     n = fromIntegral boardWidth
     m = fromIntegral boardHeight
 
--- | Обработка событий.
+--  Обработка событий.
 handleGame :: Event -> Game -> Game
-handleGame (EventKey (MouseButton LeftButton) Graphics.Gloss.Interface.Pure.Game.Down _ mouse) = makeMove (mouseToCell mouse)
+handleGame (EventKey (MouseButton LeftButton) Graphics.Gloss.Interface.Pure.Game.Down _ mouse) = moveGraphic (mouseToCell mouse)
 handleGame _ = id
--- handleGame (EventKey (MouseButton LeftButton) Graphics.Gloss.Interface.Pure.Game.Down _ mouse) = move (mouseToCell mouse)
--- handleGame _ = id
 
 
--- | Получить координаты клетки под мышкой.
+-- Получить координаты клетки под мышкой.
 mouseToCell :: Point -> Pos
 mouseToCell (x, y) = (i, j)
   where
