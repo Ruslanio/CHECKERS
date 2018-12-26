@@ -93,7 +93,7 @@ initGame = Game (3, 3) $ listArray ((0, 0), (3, 3)) $ [0 .. 15]
 
 -- Вынужденная мера, не трогать, может жахнуть
 initGameGraphic :: Game
-initGameGraphic = unsafePerformIO $ shuffle 4
+initGameGraphic = unsafePerformIO $ shuffle graphicDifficulty
 
 updateGame :: Float -> Game -> Game
 updateGame _ = id
@@ -114,3 +114,7 @@ instance Show Game where
                 column i = nums $ map (\x -> (i, x)) [0 .. 3]
                 space = "\t"
 
+
+-- Сложность игры для графической версии
+graphicDifficulty :: Int
+graphicDifficulty = 5
